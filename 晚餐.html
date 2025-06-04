@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>晚餐转盘</title>
+    <style>
+        body {
+            font-family: 'PingFang SC', sans-serif;
+            text-align: center;
+            padding: 20px;
+            background-color: #fef6e4;
+        }
+        .wheel {
+            width: 300px;
+            height: 300px;
+            margin: 30px auto;
+            border-radius: 50%;
+            background: conic-gradient(
+                #f3a683, #f7d794, #778beb, #e77f67, 
+                #cf6a87, #786fa6, #f8a5c2, #63cdda
+            );
+            position: relative;
+            transition: transform 3s cubic-bezier(0.17, 0.67, 0.12, 0.99);
+            transform: rotate(0deg);
+        }
+        .pointer {
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #e74c3c;
+            font-size: 40px;
+        }
+        button {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            font-size: 16px;
+            margin: 10px;
+            cursor: pointer;
+        }
+        #result {
+            font-size: 24px;
+            margin: 20px;
+            color: #e74c3c;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>今晚吃什么？</h1>
+    <div class="wheel" id="wheel">
+        <div class="pointer">▲</div>
+    </div>
+    <div id="result">点击下方按钮开始</div>
+    <button onclick="spin()">开始选择</button>
+    <button onclick="customize()">自定义菜单</button>
+
+    <script>
+        const foods = ["火锅", "烧烤", "炸鸡", "沙拉", "寿司", "拉面", "披萨", "炒饭"];
+        let canSpin = true;
+
+        function spin() {
+            if (!canSpin) return;
+            
+            const wheel = document.getElementById("wheel");
+            const result = document.getElementById("result");
+            
+            // 随机旋转角度（5-10圈 + 随机扇形位置）
+            const spinDegrees = 1800 + Math.floor(Math.random() * 360);
+            wheel.style.transform = `rotate(${spinDegrees}deg)`;
+            canSpin = false;
+            
+            // 计算最终选中食物
+            setTimeout(() => {
+                const sectorAngle = 360 / foods.length;
+                const normalizedAngle = spinDegrees % 360;
+                const selectedIndex = Math.floor((360 - normalizedAngle) / sectorAngle) % foods.length;
+                result.textContent = `推荐吃：${foods[selectedIndex]}！`;
+                canSpin = true;
+            }, 3000);
+        }
+
+        function customize() {
+            const newFoods = prompt("请输入食物列表，用逗号分隔：", foods.join(","));
+            if (newFoods) {
+                foods.length = 0;
+                foods.push(...newFoods.split(",").map(f => f.trim()).filter(f => f));
+                alert(`已更新为：${foods.join(", ")}`);
+            }
+        }
+    </script>
+</body>
+</html>
